@@ -59,6 +59,10 @@
     <!-- 기록 목록 -->
     <section>
       <div class="toolbar">
+        <div class="tabs" id="views">
+          <button data-view="list" class="active">📋 목록</button>
+          <button data-view="calendar">📅 달력</button>
+        </div>
         <div class="tabs" id="tabs">
           <button data-filter="all" class="active">전체</button>
           <button data-filter="book">📚 책</button>
@@ -70,6 +74,26 @@
           <option value="stars">별점 높은순</option>
           <option value="title">제목순</option>
         </select>
+      </div>
+
+      <!-- 달력 (📅 달력을 눌렀을 때만 보여요) -->
+      <div class="card calendar" id="calendar" hidden>
+        <div class="cal-head">
+          <button type="button" id="prev-month" aria-label="지난달">‹</button>
+          <h2 id="month-label"></h2>
+          <button type="button" id="next-month" aria-label="다음달">›</button>
+        </div>
+        <div class="cal-grid cal-week">
+          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+        </div>
+        <div class="cal-grid" id="cal-days"></div>
+      </div>
+
+      <!-- 달력에서 날짜를 눌렀을 때 나오는 줄 -->
+      <div class="day-bar" id="day-bar" hidden>
+        <strong id="day-label"></strong>
+        <button type="button" id="write-day">이 날 기록 쓰기</button>
+        <button type="button" id="clear-day">이번 달 전체 보기</button>
       </div>
 
       <ul class="list" id="list"></ul>

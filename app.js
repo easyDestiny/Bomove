@@ -5,6 +5,10 @@ let entries = load();
 let currentStars = 0;   // 지금 폼에서 고른 별점
 let editingId = null;   // 수정 중인 기록의 id (새 기록이면 null)
 let filter = "all";     // 전체 / 책 / 영화
+let view = "list";      // 목록 / 달력
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0이 1월이에요
+let selectedDay = null; // 달력에서 누른 날짜 (예: "2026-10-25")
 
 const $ = (id) => document.getElementById(id);
 const form = $("entry-form");
@@ -77,6 +81,12 @@ form.addEventListener("submit", (e) => {
     entries.push({ id: Date.now().toString(36), ...data });
   }
 
+  // 달력에서는 방금 저장한 기록이 있는 달로 이동
+  if (data.date) {
+    calYear = Number(data.date.slice(0, 4));
+    calMonth = Number(data.date.slice(5, 7)) - 1;
+  }
+
   save();
   resetForm();
   render();
@@ -131,6 +141,16 @@ function render() {
     );
   }
 
+  $("calendar").hidden = view !== "calendar";
+  $("day-bar").hidden = view !== "calendar" || !selectedDay;
+  if (view === "calendar") {
+    drawCalendar(shown);
+    // 날짜를 눌렀으면 그 날 기록만, 아니면 이번 달 기록만 아래에 보여줘요
+    const prefix = selectedDay || ymd(calYear, calMonth, 1).slice(0, 7);
+    shown = shown.filter((x) => (x.date || "").startsWith(prefix));
+    if (selectedDay) $("day-label").textContent = `${koDate(selectedDay)} 기록 ${shown.length}개`;
+  }
+
   shown.sort((a, b) => {
     if (sort === "stars") return b.stars - a.stars;
     if (sort === "title") return a.title.localeCompare(b.title, "ko");
@@ -143,8 +163,80 @@ function render() {
     list.appendChild(makeEntry(item));
   }
   $("empty").hidden = shown.length > 0;
+  $("empty").textContent =
+    view === "calendar"
+      ? selectedDay ? "이 날은 기록이 없어요." : "이번 달은 기록이 없어요."
+      : "아직 기록이 없어요. 위에서 첫 기록을 남겨보세요!";
 
   renderStats();
+}
+
+// ---------- 달력 그리기 ----------
+function drawCalendar(items) {
+  $("month-label").textContent = `${calYear}년 ${calMonth + 1}월`;
+  const box = $("cal-days");
+  box.innerHTML = "";
+
+  const firstWeekday = new Date(calYear, calMonth, 1).getDay(); // 1일이 무슨 요일인지
+  const lastDate = new Date(calYear, calMonth + 1, 0).getDate(); // 이번 달은 며칠까지인지
+
+  // 1일 앞의 빈칸
+  for (let i = 0; i < firstWeekday; i++) {
+    const blank = document.createElement("div");
+    blank.className = "cell blank";
+    box.appendChild(blank);
+  }
+
+  for (let d = 1; d <= lastDate; d++) {
+    const key = ymd(calYear, calMonth, d);
+    const dayItems = items.filter((x) => x.date === key);
+
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "cell";
+    if (key === today()) cell.classList.add("today");
+    if (key === selectedDay) cell.classList.add("selected");
+    cell.setAttribute("aria-label", `${koDate(key)}, 기록 ${dayItems.length}개`);
+
+    const num = document.createElement("span");
+    num.className = "num";
+    num.textContent = d;
+    cell.appendChild(num);
+
+    // 칸이 작아서 2개까지만 보여주고 나머지는 +숫자로
+    for (const item of dayItems.slice(0, 2)) {
+      const chip = document.createElement("span");
+      chip.className = `chip ${item.type}`;
+      chip.title = item.title;
+      const icon = document.createElement("span");
+      icon.textContent = item.type === "book" ? "📚" : "🎬";
+      const name = document.createElement("span");
+      name.className = "chip-title";
+      name.textContent = " " + item.title;
+      chip.append(icon, name);
+      cell.appendChild(chip);
+    }
+    if (dayItems.length > 2) {
+      const more = document.createElement("span");
+      more.className = "more";
+      more.textContent = `+${dayItems.length - 2}`;
+      cell.appendChild(more);
+    }
+
+    cell.addEventListener("click", () => {
+      selectedDay = selectedDay === key ? null : key; // 한 번 더 누르면 선택 취소
+      render();
+    });
+    box.appendChild(cell);
+  }
+}
+
+function moveMonth(step) {
+  const d = new Date(calYear, calMonth + step, 1);
+  calYear = d.getFullYear();
+  calMonth = d.getMonth();
+  selectedDay = null;
+  render();
 }
 
 // 글자는 textContent로 넣어서, 감상평에 무엇을 써도 안전하게 보여요
@@ -230,9 +322,41 @@ $("import-file").addEventListener("change", async (e) => {
 });
 
 // ---------- 기타 ----------
+// 한국 시간 기준 오늘 날짜 ("2026-10-25" 모양)
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  return ymd(now.getFullYear(), now.getMonth(), now.getDate());
 }
+
+function ymd(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+// "2026-10-25" → "10월 25일"
+function koDate(key) {
+  return `${Number(key.slice(5, 7))}월 ${Number(key.slice(8, 10))}일`;
+}
+
+$("views").addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  view = btn.dataset.view;
+  for (const b of $("views").children) b.classList.toggle("active", b === btn);
+  render();
+});
+
+$("prev-month").addEventListener("click", () => moveMonth(-1));
+$("next-month").addEventListener("click", () => moveMonth(1));
+$("clear-day").addEventListener("click", () => {
+  selectedDay = null;
+  render();
+});
+$("write-day").addEventListener("click", () => {
+  resetForm();
+  $("date").value = selectedDay;
+  form.scrollIntoView({ behavior: "smooth" });
+  $("title").focus();
+});
 
 $("tabs").addEventListener("click", (e) => {
   const btn = e.target.closest("button");
