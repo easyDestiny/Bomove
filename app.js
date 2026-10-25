@@ -3,9 +3,10 @@ const STORAGE_KEY = "bomove-entries";
 
 let entries = load();
 let currentStars = 0;   // 지금 폼에서 고른 별점
+let currentCover = "";  // 지금 폼에 넣은 표지 사진
 let editingId = null;   // 수정 중인 기록의 id (새 기록이면 null)
 let filter = "all";     // 전체 / 책 / 영화
-let view = "list";      // 목록 / 달력
+let view = "calendar";  // 달력 / 목록 (처음엔 달력)
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth(); // 0이 1월이에요
 let selectedDay = null; // 달력에서 누른 날짜 (예: "2026-10-25")
@@ -58,6 +59,7 @@ function updateCreatorLabel() {
   const type = form.type.value;
   $("creator-label").textContent = type === "book" ? "지은이" : "감독";
   $("creator").placeholder = type === "book" ? "예: 손원평" : "예: 봉준호";
+  $("cover-label").textContent = type === "book" ? "책 표지" : "영화 포스터";
 }
 
 // ---------- 폼 저장 ----------
@@ -70,6 +72,7 @@ form.addEventListener("submit", (e) => {
     creator: $("creator").value.trim(),
     date: $("date").value,
     stars: currentStars,
+    cover: currentCover,
     review: $("review").value.trim(),
   };
   if (!data.title) return;
@@ -96,11 +99,13 @@ function resetForm() {
   form.reset();
   $("date").value = today();
   currentStars = 0;
+  currentCover = "";
   editingId = null;
   $("form-title").textContent = "새 기록 남기기";
   $("save-btn").textContent = "저장하기";
   $("cancel-btn").hidden = true;
   drawStarInput();
+  drawCover();
   updateCreatorLabel();
 }
 
@@ -113,10 +118,12 @@ function startEdit(id) {
   $("date").value = item.date;
   $("review").value = item.review;
   currentStars = item.stars;
+  currentCover = item.cover || "";
   $("form-title").textContent = "기록 수정하기";
   $("save-btn").textContent = "수정 완료";
   $("cancel-btn").hidden = false;
   drawStarInput();
+  drawCover();
   updateCreatorLabel();
   form.scrollIntoView({ behavior: "smooth" });
 }
@@ -142,6 +149,8 @@ function render() {
   }
 
   $("calendar").hidden = view !== "calendar";
+  $("search").hidden = view === "calendar";
+  $("sort").hidden = view === "calendar";
   $("day-bar").hidden = view !== "calendar" || !selectedDay;
   if (view === "calendar") {
     drawCalendar(shown);
@@ -174,6 +183,7 @@ function render() {
 // ---------- 달력 그리기 ----------
 function drawCalendar(items) {
   $("month-label").textContent = `${calYear}년 ${calMonth + 1}월`;
+  drawMonthSummary();
   const box = $("cal-days");
   box.innerHTML = "";
 
@@ -198,28 +208,31 @@ function drawCalendar(items) {
     if (key === selectedDay) cell.classList.add("selected");
     cell.setAttribute("aria-label", `${koDate(key)}, 기록 ${dayItems.length}개`);
 
+    // 그 날 본 게 있으면 칸을 표지 그림으로 가득 채워요 (여러 개면 첫 번째 것)
+    const first = dayItems[0];
+    if (first) {
+      cell.classList.add("filled", first.type);
+      if (first.cover) {
+        const img = document.createElement("img");
+        img.src = first.cover;
+        img.alt = "";
+        // 이미지 주소가 깨지면 제목 칸으로 바꿔요
+        img.addEventListener("error", () => img.replaceWith(coverText(first)));
+        cell.appendChild(img);
+      } else {
+        cell.appendChild(coverText(first));
+      }
+    }
+
     const num = document.createElement("span");
     num.className = "num";
     num.textContent = d;
     cell.appendChild(num);
 
-    // 칸이 작아서 2개까지만 보여주고 나머지는 +숫자로
-    for (const item of dayItems.slice(0, 2)) {
-      const chip = document.createElement("span");
-      chip.className = `chip ${item.type}`;
-      chip.title = item.title;
-      const icon = document.createElement("span");
-      icon.textContent = item.type === "book" ? "📚" : "🎬";
-      const name = document.createElement("span");
-      name.className = "chip-title";
-      name.textContent = " " + item.title;
-      chip.append(icon, name);
-      cell.appendChild(chip);
-    }
-    if (dayItems.length > 2) {
+    if (dayItems.length > 1) {
       const more = document.createElement("span");
       more.className = "more";
-      more.textContent = `+${dayItems.length - 2}`;
+      more.textContent = `+${dayItems.length - 1}`;
       cell.appendChild(more);
     }
 
@@ -229,6 +242,29 @@ function drawCalendar(items) {
     });
     box.appendChild(cell);
   }
+}
+
+// 표지 사진이 없을 때 대신 보여줄 제목 칸
+function coverText(item) {
+  const span = document.createElement("span");
+  span.className = "cover-text";
+  span.textContent = item.title;
+  return span;
+}
+
+// "10월에는 책 5권, 영화 3편을 봤어요!"
+function drawMonthSummary() {
+  const prefix = ymd(calYear, calMonth, 1).slice(0, 7);
+  const inMonth = entries.filter((x) => (x.date || "").startsWith(prefix));
+  const books = inMonth.filter((x) => x.type === "book").length;
+  const movies = inMonth.length - books;
+
+  const parts = [];
+  if (books) parts.push(`📚 책 ${books}권`);
+  if (movies) parts.push(`🎬 영화 ${movies}편`);
+  $("month-summary").textContent = parts.length
+    ? `${calMonth + 1}월에는 ${parts.join(", ")}을 봤어요!`
+    : `${calMonth + 1}월의 첫 기록을 남겨보세요`;
 }
 
 function moveMonth(step) {
@@ -244,6 +280,19 @@ function makeEntry(item) {
   const li = document.createElement("li");
   li.className = `entry ${item.type}`;
 
+  if (item.cover) {
+    const img = document.createElement("img");
+    img.className = "thumb";
+    img.src = item.cover;
+    img.alt = `${item.title} 표지`;
+    img.addEventListener("error", () => img.remove());
+    li.appendChild(img);
+  }
+
+  const body = document.createElement("div");
+  body.className = "entry-body";
+  li.appendChild(body);
+
   const head = document.createElement("div");
   head.className = "entry-head";
   const h3 = document.createElement("h3");
@@ -257,13 +306,13 @@ function makeEntry(item) {
   meta.className = "meta";
   meta.textContent = [item.creator, item.date].filter(Boolean).join(" · ");
 
-  li.append(head, meta);
+  body.append(head, meta);
 
   if (item.review) {
     const p = document.createElement("p");
     p.className = "review";
     p.textContent = item.review;
-    li.appendChild(p);
+    body.appendChild(p);
   }
 
   const actions = document.createElement("div");
@@ -275,7 +324,7 @@ function makeEntry(item) {
   delBtn.textContent = "삭제";
   delBtn.addEventListener("click", () => remove(item.id));
   actions.append(editBtn, delBtn);
-  li.appendChild(actions);
+  body.appendChild(actions);
 
   return li;
 }
@@ -294,6 +343,55 @@ function renderStats() {
     $("stats").appendChild(span);
   }
 }
+
+// ---------- 표지 사진 ----------
+function drawCover() {
+  const preview = $("cover-preview");
+  preview.hidden = !currentCover;
+  if (currentCover) preview.src = currentCover;
+  $("cover-remove").hidden = !currentCover;
+  $("cover-url").value = currentCover.startsWith("data:") ? "" : currentCover;
+}
+
+// 휴대폰 사진은 너무 커서, 작게 줄여서 저장해요 (한 장에 20KB 정도)
+async function shrinkImage(file) {
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  await new Promise((ok, fail) => {
+    img.onload = ok;
+    img.onerror = fail;
+    img.src = url;
+  });
+  const scale = Math.min(1, 360 / img.height, 240 / img.width);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(img.width * scale);
+  canvas.height = Math.round(img.height * scale);
+  canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+  URL.revokeObjectURL(url);
+  return canvas.toDataURL("image/jpeg", 0.8);
+}
+
+$("cover-file").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    currentCover = await shrinkImage(file);
+    drawCover();
+  } catch {
+    alert("사진을 읽지 못했어요.");
+  }
+  e.target.value = "";
+});
+
+$("cover-url").addEventListener("change", () => {
+  currentCover = $("cover-url").value.trim();
+  drawCover();
+});
+
+$("cover-remove").addEventListener("click", () => {
+  currentCover = "";
+  drawCover();
+});
 
 // ---------- 백업 ----------
 $("export-btn").addEventListener("click", () => {
@@ -350,6 +448,11 @@ $("next-month").addEventListener("click", () => moveMonth(1));
 $("clear-day").addEventListener("click", () => {
   selectedDay = null;
   render();
+});
+$("write-new").addEventListener("click", () => {
+  resetForm();
+  form.scrollIntoView({ behavior: "smooth" });
+  $("title").focus();
 });
 $("write-day").addEventListener("click", () => {
   resetForm();

@@ -15,6 +15,52 @@
   </header>
 
   <main>
+    <!-- 기록 보기: 처음 열면 달력이 먼저 보여요 -->
+    <section>
+      <div class="toolbar">
+        <div class="tabs" id="views">
+          <button data-view="calendar" class="active">📅 달력</button>
+          <button data-view="list">📋 목록</button>
+        </div>
+        <div class="tabs" id="tabs">
+          <button data-filter="all" class="active">전체</button>
+          <button data-filter="book">📚 책</button>
+          <button data-filter="movie">🎬 영화</button>
+        </div>
+        <input type="search" id="search" placeholder="제목·감상평 검색" hidden>
+        <select id="sort" hidden>
+          <option value="date">최신순</option>
+          <option value="stars">별점 높은순</option>
+          <option value="title">제목순</option>
+        </select>
+      </div>
+
+      <!-- 달력 -->
+      <div class="card calendar" id="calendar">
+        <div class="cal-head">
+          <button type="button" id="prev-month" aria-label="지난달">‹</button>
+          <h2 id="month-label"></h2>
+          <button type="button" id="next-month" aria-label="다음달">›</button>
+        </div>
+        <p class="month-summary" id="month-summary"></p>
+        <div class="cal-grid cal-week">
+          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+        </div>
+        <div class="cal-grid" id="cal-days"></div>
+        <button type="button" class="primary write-btn" id="write-new">+ 새 기록 쓰기</button>
+      </div>
+
+      <!-- 달력에서 날짜를 눌렀을 때 나오는 줄 -->
+      <div class="day-bar" id="day-bar" hidden>
+        <strong id="day-label"></strong>
+        <button type="button" id="write-day">이 날 기록 쓰기</button>
+        <button type="button" id="clear-day">이번 달 전체 보기</button>
+      </div>
+
+      <ul class="list" id="list"></ul>
+      <p class="empty" id="empty"></p>
+    </section>
+
     <!-- 새 기록을 쓰는 곳 -->
     <section class="card form-card">
       <h2 id="form-title">새 기록 남기기</h2>
@@ -40,6 +86,21 @@
         </label>
 
         <div class="field">
+          <span id="cover-label">책 표지</span>
+          <div class="cover-pick">
+            <img id="cover-preview" alt="표지 미리보기" hidden>
+            <div class="cover-buttons">
+              <label class="file-btn">
+                사진 고르기
+                <input type="file" id="cover-file" accept="image/*" hidden>
+              </label>
+              <button type="button" id="cover-remove" hidden>사진 빼기</button>
+            </div>
+          </div>
+          <input type="url" id="cover-url" placeholder="또는 인터넷 이미지 주소 붙여넣기">
+        </div>
+
+        <div class="field">
           별점
           <div class="star-input" id="star-input" role="radiogroup" aria-label="별점"></div>
         </div>
@@ -54,50 +115,6 @@
           <button type="button" id="cancel-btn" hidden>수정 취소</button>
         </div>
       </form>
-    </section>
-
-    <!-- 기록 목록 -->
-    <section>
-      <div class="toolbar">
-        <div class="tabs" id="views">
-          <button data-view="list" class="active">📋 목록</button>
-          <button data-view="calendar">📅 달력</button>
-        </div>
-        <div class="tabs" id="tabs">
-          <button data-filter="all" class="active">전체</button>
-          <button data-filter="book">📚 책</button>
-          <button data-filter="movie">🎬 영화</button>
-        </div>
-        <input type="search" id="search" placeholder="제목·감상평 검색">
-        <select id="sort">
-          <option value="date">최신순</option>
-          <option value="stars">별점 높은순</option>
-          <option value="title">제목순</option>
-        </select>
-      </div>
-
-      <!-- 달력 (📅 달력을 눌렀을 때만 보여요) -->
-      <div class="card calendar" id="calendar" hidden>
-        <div class="cal-head">
-          <button type="button" id="prev-month" aria-label="지난달">‹</button>
-          <h2 id="month-label"></h2>
-          <button type="button" id="next-month" aria-label="다음달">›</button>
-        </div>
-        <div class="cal-grid cal-week">
-          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
-        </div>
-        <div class="cal-grid" id="cal-days"></div>
-      </div>
-
-      <!-- 달력에서 날짜를 눌렀을 때 나오는 줄 -->
-      <div class="day-bar" id="day-bar" hidden>
-        <strong id="day-label"></strong>
-        <button type="button" id="write-day">이 날 기록 쓰기</button>
-        <button type="button" id="clear-day">이번 달 전체 보기</button>
-      </div>
-
-      <ul class="list" id="list"></ul>
-      <p class="empty" id="empty">아직 기록이 없어요. 위에서 첫 기록을 남겨보세요!</p>
     </section>
 
     <!-- 백업 -->
