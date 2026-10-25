@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bomove · 책과 영화 기록장</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 맨 위 제목 영역 -->
+  <header class="top">
+    <h1>Bomove</h1>
+    <p class="subtitle">내가 읽은 책, 내가 본 영화 기록장</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <main>
+    <!-- 새 기록을 쓰는 곳 -->
+    <section class="card form-card">
+      <h2 id="form-title">새 기록 남기기</h2>
+      <form id="entry-form">
+        <div class="type-pick">
+          <label><input type="radio" name="type" value="book" checked> 📚 책</label>
+          <label><input type="radio" name="type" value="movie"> 🎬 영화</label>
+        </div>
+
+        <label class="field">
+          제목
+          <input type="text" id="title" required placeholder="예: 아몬드">
+        </label>
+
+        <label class="field">
+          <span id="creator-label">지은이</span>
+          <input type="text" id="creator" placeholder="예: 손원평">
+        </label>
+
+        <label class="field">
+          다 본 날짜
+          <input type="date" id="date">
+        </label>
+
+        <div class="field">
+          별점
+          <div class="star-input" id="star-input" role="radiogroup" aria-label="별점"></div>
+        </div>
+
+        <label class="field">
+          감상평
+          <textarea id="review" rows="5" placeholder="어떤 점이 좋았는지, 기억에 남는 장면이나 문장을 적어보세요"></textarea>
+        </label>
+
+        <div class="buttons">
+          <button type="submit" class="primary" id="save-btn">저장하기</button>
+          <button type="button" id="cancel-btn" hidden>수정 취소</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 기록 목록 -->
+    <section>
+      <div class="toolbar">
+        <div class="tabs" id="tabs">
+          <button data-filter="all" class="active">전체</button>
+          <button data-filter="book">📚 책</button>
+          <button data-filter="movie">🎬 영화</button>
+        </div>
+        <input type="search" id="search" placeholder="제목·감상평 검색">
+        <select id="sort">
+          <option value="date">최신순</option>
+          <option value="stars">별점 높은순</option>
+          <option value="title">제목순</option>
+        </select>
+      </div>
+
+      <ul class="list" id="list"></ul>
+      <p class="empty" id="empty">아직 기록이 없어요. 위에서 첫 기록을 남겨보세요!</p>
+    </section>
+
+    <!-- 백업 -->
+    <section class="backup">
+      <button type="button" id="export-btn">기록 백업 파일로 저장</button>
+      <label class="file-btn">
+        백업 파일 불러오기
+        <input type="file" id="import-file" accept="application/json" hidden>
+      </label>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

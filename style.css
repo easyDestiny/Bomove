@@ -1,0 +1,196 @@
+/* 색깔은 여기서 한 번에 바꿀 수 있어요 */
+:root {
+  --bg: #faf6f0;
+  --card: #ffffff;
+  --text: #2b2420;
+  --muted: #8a7f76;
+  --line: #e9e1d7;
+  --accent: #c2603c;
+  --star: #f2b01e;
+  --book: #3d7a5c;
+  --movie: #5a4fa8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1917;
+    --card: #282320;
+    --text: #f1ebe4;
+    --muted: #a89d93;
+    --line: #3a332e;
+    --accent: #e07a52;
+    --book: #6cbf94;
+    --movie: #9d93ea;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+/* 제목 영역 */
+.top {
+  text-align: center;
+  padding: 40px 16px 24px;
+}
+.top h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+.subtitle { margin: 4px 0 16px; color: var(--muted); }
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.stats span {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.9rem;
+}
+
+/* 카드 */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.card h2 { margin: 0 0 16px; font-size: 1.2rem; }
+
+/* 입력 폼 */
+.type-pick { display: flex; gap: 16px; margin-bottom: 12px; }
+.type-pick label { cursor: pointer; }
+.field {
+  display: block;
+  margin-bottom: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.field input,
+.field textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+}
+.field textarea { resize: vertical; }
+
+/* 별점 입력: 별을 눌러서 고르기 */
+.star-input { display: flex; gap: 2px; margin-top: 4px; }
+.star-input button {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--line);
+}
+.star-input button.on { color: var(--star); }
+
+/* 버튼 */
+button, .file-btn {
+  font: inherit;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+.buttons { display: flex; gap: 8px; }
+
+/* 목록 위 도구 모음 */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tabs { display: flex; gap: 4px; }
+.tabs button.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.toolbar input, .toolbar select {
+  flex: 1;
+  min-width: 120px;
+  font: inherit;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+}
+
+/* 기록 목록 */
+.list { list-style: none; margin: 0; padding: 0; }
+.entry {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--book);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.entry.movie { border-left-color: var(--movie); }
+.entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.entry h3 { margin: 0; font-size: 1.1rem; }
+.entry .meta { color: var(--muted); font-size: 0.85rem; }
+.entry .stars { color: var(--star); letter-spacing: 1px; }
+.entry .review {
+  margin: 10px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.entry .actions { margin-top: 10px; display: flex; gap: 6px; }
+.entry .actions button { padding: 4px 10px; font-size: 0.85rem; }
+
+.empty { text-align: center; color: var(--muted); padding: 24px 0; }
+
+.backup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 32px;
+  font-size: 0.9rem;
+}
