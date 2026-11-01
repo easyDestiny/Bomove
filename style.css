@@ -1,34 +1,40 @@
-/* 색깔은 여기서 한 번에 바꿀 수 있어요 */
+/* 색깔은 여기서 한 번에 바꿀 수 있어요
+   오래된 서재 느낌: 바랜 종이, 잉크 갈색, 짙은 원목, 빛바랜 천 표지 색 */
 :root {
-  --bg: #faf6f0;
-  --card: #ffffff;
-  --text: #2b2420;
-  --muted: #8a7f76;
-  --line: #e9e1d7;
-  --accent: #c2603c;
-  --star: #f2b01e;
-  --book: #3d7a5c;
-  --drama: #b5527a;
-  --movie: #5a4fa8;
-  /* 전시관은 밤에도 낮에도 어두운 벽이에요 */
-  --wall: #221d1a;
-  --wall-light: #3a302a;
-  --gold: #d9b26a;
+  --bg: #e6dbc4;          /* 누렇게 바랜 종이 */
+  --paper: #f2e9d6;       /* 카드에 쓰는 종이 */
+  --paper-dark: #e0d1b2;
+  --text: #3b2c22;        /* 잉크 갈색 */
+  --muted: #85705b;
+  --line: #cbb791;
+  --accent: #7d3a2c;      /* 바랜 자줏빛 갈색 */
+  --star: #8a5a2b;        /* 별도 잉크 색으로 */
+  --book: #4a5d46;        /* 빛바랜 초록 천 */
+  --drama: #7a4a4f;       /* 빛바랜 장밋빛 갈색 */
+  --movie: #3e4d63;       /* 빛바랜 남색 */
+  --wood: #4a3020;
+  --wood-dark: #24170f;
+  --cream: #eadcc0;       /* 어두운 서가 위에 쓰는 글자 색 */
+  /* 종이 결: 아주 작은 얼룩 무늬를 그림으로 만들어서 깔아요 */
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .12 0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>");
 }
 
 @media (prefers-color-scheme: dark) {
+  /* 밤의 서재 */
   :root {
-    --bg: #1c1917;
-    --card: #282320;
-    --text: #f1ebe4;
-    --muted: #a89d93;
-    --line: #3a332e;
-    --accent: #e07a52;
-    --book: #4f9a74;
-    --drama: #c96a91;
-    --movie: #7a6fc8;
-    --wall: #12100e;
-    --wall-light: #2a231f;
+    --bg: #1d1612;
+    --paper: #2a201a;
+    --paper-dark: #33271f;
+    --text: #eadcc3;
+    --muted: #a8957a;
+    --line: #4a3a2d;
+    --accent: #b8705a;
+    --star: #d2a877;
+    --book: #55694f;
+    --drama: #85555a;
+    --movie: #4b5a72;
+    --wood: #3a2618;
+    --wood-dark: #140d08;
   }
 }
 
@@ -39,10 +45,15 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  /* 종이 결 + 가장자리가 살짝 어두운 오래된 종이 */
+  background:
+    var(--grain),
+    radial-gradient(ellipse at center, transparent 55%, rgba(80, 50, 20, 0.18)),
+    var(--bg);
   color: var(--text);
-  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-  line-height: 1.6;
+  font-family: "Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  line-height: 1.7;
 }
 
 main {
@@ -51,16 +62,34 @@ main {
   padding: 0 16px 48px;
 }
 
+/* 종이 느낌 상자 (카드, 창, 버튼에 같이 써요) */
+.paper,
+.stats span,
+.entry,
+.card,
+dialog {
+  background: var(--grain), var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 3px 10px rgba(60, 40, 20, 0.12);
+}
+
 /* 제목 영역 */
 .top {
   text-align: center;
-  padding: 40px 16px 20px;
+  padding: 44px 16px 20px;
 }
 .top h1 {
   margin: 0;
-  font-size: 2.4rem;
-  letter-spacing: -0.02em;
-  color: var(--accent);
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.top h1::after {
+  content: "— ❦ —";
+  display: block;
+  font-size: 0.9rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
 }
 .subtitle { margin: 4px 0 16px; color: var(--muted); }
 .stats {
@@ -70,10 +99,8 @@ main {
   flex-wrap: wrap;
 }
 .stats span {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 4px 12px;
+  border-radius: 3px;
+  padding: 2px 12px;
   font-size: 0.9rem;
 }
 
@@ -81,35 +108,36 @@ main {
 button, .file-btn {
   font: inherit;
   border: 1px solid var(--line);
-  background: var(--card);
+  background: var(--grain), var(--paper);
   color: var(--text);
-  border-radius: 10px;
-  padding: 8px 14px;
+  border-radius: 4px;
+  padding: 7px 14px;
   cursor: pointer;
 }
 button.primary {
-  background: var(--accent);
+  background: var(--grain), var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: #f4e9d6;
   font-weight: 700;
 }
 .buttons { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* 책 / 드라마 / 영화 / 달력 탭 */
+/* 책 / 드라마 / 영화 / 달력 탭: 책갈피 색인처럼 */
 .main-tabs {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   padding: 0 16px 24px;
   flex-wrap: wrap;
 }
 .main-tabs button {
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-weight: 600;
+  border-radius: 6px 6px 0 0;
+  border-bottom-width: 3px;
+  padding: 8px 16px 6px;
+  font-weight: 700;
 }
 .main-tabs button.active {
-  background: var(--text);
+  background: var(--grain), var(--text);
   color: var(--bg);
   border-color: var(--text);
 }
@@ -123,71 +151,54 @@ button.primary {
 }
 .collection-head h2 { margin: 0; font-size: 1.3rem; }
 
-/* ---------- 전시관 ---------- */
+/* ---------- 서가 (다 본 것 전시) ---------- */
 .gallery {
   position: relative;
-  /* 위에서 조명이 비추는 어두운 벽 */
+  /* 위에서 따뜻한 등불이 비추는 원목 서가 */
   background:
-    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 226, 170, 0.16), transparent 70%),
-    linear-gradient(var(--wall-light), var(--wall) 45%);
-  border-radius: 20px;
-  padding: 28px 20px 32px;
+    radial-gradient(ellipse 75% 35% at 50% 0%, rgba(255, 190, 110, 0.28), transparent 75%),
+    var(--grain),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0 2px, transparent 2px 90px),
+    linear-gradient(var(--wood), var(--wood-dark) 60%);
+  border: 10px solid var(--wood-dark);
+  border-radius: 6px;
+  padding: 26px 22px 30px;
   margin-bottom: 32px;
-  color: #f3ead9;
-  box-shadow: inset 0 -12px 24px rgba(0, 0, 0, 0.35);
+  color: var(--cream);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 8px 20px rgba(40, 25, 10, 0.35);
 }
-.gallery-head { text-align: center; margin-bottom: 28px; }
+.gallery-head { text-align: center; margin-bottom: 26px; }
 .gallery-label {
   margin: 0;
   font-size: 0.7rem;
-  letter-spacing: 0.4em;
-  color: var(--gold);
+  letter-spacing: 0.45em;
+  color: rgba(234, 220, 192, 0.6);
 }
-.gallery-head h3 {
-  margin: 4px 0 0;
-  font-size: 1.5rem;
-  font-family: "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
-  font-weight: 700;
-}
-.gallery-count { margin: 0 0 12px; color: var(--gold); font-weight: 700; }
+.gallery-head h3 { margin: 2px 0 0; font-size: 1.5rem; }
+.gallery-count { margin: 0 0 12px; color: rgba(234, 220, 192, 0.75); }
 .gallery-head select {
   font: inherit;
   font-size: 0.85rem;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(217, 178, 106, 0.5);
-  background: transparent;
-  color: #f3ead9;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(234, 220, 192, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--cream);
 }
 .gallery-head select option { color: #222; }
-.gallery-empty { text-align: center; color: #bfb2a0; margin: 0; }
+.gallery-empty { text-align: center; color: rgba(234, 220, 192, 0.7); margin: 0; }
 
 .wall {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 36px 24px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 30px 24px;
 }
 
-/* 액자 하나 */
-.frame {
-  position: relative;
-  animation: hang 0.6s both;
-  animation-delay: calc(var(--i) * 60ms);
-}
-/* 액자 위의 작은 조명 */
-.frame::before {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  top: -24px;
-  height: 60px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(255, 232, 186, 0.35), transparent 70%);
-  pointer-events: none;
-}
+/* 서가에 꽂힌 작품 하나 */
+.frame { animation: shelve 0.7s both; animation-delay: calc(var(--i) * 70ms); }
 .frame button {
   display: block;
   width: 100%;
@@ -196,23 +207,15 @@ button.primary {
   background: none;
   color: inherit;
   text-align: center;
-  border-radius: 4px;
 }
+
 .art {
   position: relative;
   aspect-ratio: 2 / 3;
-  /* 하얀 여백 + 나무 액자 */
-  padding: 6px;
-  background: #f6f0e4;
-  border: 5px solid #5b4433;
-  border-radius: 3px;
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.55), 0 2px 4px rgba(0, 0, 0, 0.4);
-  transition: transform 0.25s, box-shadow 0.25s;
-}
-.frame button:hover .art,
-.frame button:focus-visible .art {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 22px 34px rgba(0, 0, 0, 0.6), 0 0 0 2px var(--gold);
+  border-radius: 2px 4px 4px 2px;
+  overflow: hidden;
+  box-shadow: 5px 4px 10px rgba(0, 0, 0, 0.55);
+  transition: transform 0.3s;
 }
 .art img,
 .art .cover-text {
@@ -220,38 +223,79 @@ button.primary {
   height: 100%;
   object-fit: cover;
 }
-.art img { display: block; }
-
-/* 별 5개짜리는 금색 액자 */
-.masterpiece .art {
-  border-color: var(--gold);
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.55), 0 0 22px rgba(217, 178, 106, 0.45);
+/* 사진은 살짝 바랜 색으로 */
+.art img {
+  display: block;
+  filter: sepia(0.25) saturate(0.85) contrast(0.95);
+  transition: filter 0.3s;
 }
-.badge {
+/* 종이 결 + 책등 그림자 */
+.art::after {
+  content: "";
   position: absolute;
-  top: -12px;
-  right: -12px;
-  background: var(--gold);
-  color: #3a2a12;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background:
+    var(--grain),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0, rgba(255, 255, 255, 0.12) 4%, rgba(0, 0, 0, 0.08) 8%, transparent 14%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+/* 드라마·영화는 오래된 사진처럼 종이 테두리 */
+.frame.drama .art,
+.frame.movie .art {
+  padding: 5px 5px 14px;
+  background: var(--grain), #efe4cc;
+  border-radius: 2px;
+}
+.frame.drama .art::after,
+.frame.movie .art::after { background: var(--grain); }
+
+.frame button:hover .art,
+.frame button:focus-visible .art { transform: translateY(-8px); }
+.frame button:hover .art img { filter: none; }
+
+/* 원목 선반 (옆 칸 선반이랑 이어져 보여요) */
+.shelf {
+  height: 12px;
+  margin: 0 -12px;
+  background: linear-gradient(#6b4a33, #3a2618 70%, #24170f);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* 방금 다 본 것은 반짝 */
-.just-done .art { animation: shine 1.6s 0.4s 2; }
+/* 별 5개짜리는 천 책갈피 끈이 달려요 */
+.ribbon {
+  position: absolute;
+  top: 0;
+  right: 10%;
+  z-index: 1;
+  width: 20px;
+  padding: 4px 0 12px;
+  background: var(--grain), #8c3b30;
+  color: #f2e4cc;
+  font-size: 0.6rem;
+  line-height: 1.1;
+  writing-mode: vertical-rl;
+  letter-spacing: 0.1em;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
 
-/* 액자 아래 이름표 */
+/* 방금 다 본 것은 등불 빛이 한 번 비춰요 */
+.just-done .art { animation: glow 1.8s 0.4s 2; }
+
+/* 선반 아래 도서 카드 */
 .plaque {
-  margin: 12px auto 0;
-  max-width: 100%;
-  padding: 4px 8px;
-  background: linear-gradient(#e9d3a3, #c9a866);
-  color: #3a2a12;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  margin: 10px 4px 0;
+  padding: 5px 6px 4px;
+  background:
+    var(--grain),
+    repeating-linear-gradient(transparent 0 15px, rgba(120, 90, 60, 0.18) 15px 16px),
+    #f1e6cf;
+  color: #3b2c22;
+  border-top: 2px solid rgba(140, 59, 48, 0.55);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45);
+  transform: rotate(var(--tilt, 0deg));
   font-size: 0.8rem;
   line-height: 1.35;
 }
@@ -261,50 +305,60 @@ button.primary {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.plaque .stars { color: #7a4f00; font-size: 0.75rem; letter-spacing: 1px; }
+.plaque .stars { color: #7a5230; font-size: 0.72rem; letter-spacing: 1px; }
 
-@keyframes hang {
-  from { opacity: 0; transform: translateY(-16px) rotate(-2deg); }
+@keyframes shelve {
+  from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: none; }
 }
-@keyframes shine {
-  50% { box-shadow: 0 0 0 4px var(--gold), 0 0 40px rgba(255, 220, 140, 0.9); }
+@keyframes glow {
+  50% { box-shadow: 0 0 0 3px rgba(255, 210, 150, 0.7), 0 0 36px rgba(255, 190, 110, 0.9); }
 }
 @media (prefers-reduced-motion: reduce) {
   .frame, .just-done .art { animation: none; }
 }
 
-/* 표지가 없을 때 만들어 주는 표지 */
+/* 표지가 없을 때 만들어 주는 표지: 오래된 천 장정처럼 */
 .cover-text {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 6px;
-  background: linear-gradient(160deg, var(--book), #1f3d2e);
-  color: #fff;
+  gap: 8px;
+  padding: 14px 10px;
+  background: var(--grain), var(--book);
+  color: #eadcc0;
   text-align: center;
   overflow: hidden;
   overflow-wrap: anywhere;
+  /* 안쪽에 가는 두 줄 테두리 */
+  box-shadow:
+    inset 0 0 0 6px var(--book),
+    inset 0 0 0 7px rgba(234, 220, 192, 0.55),
+    inset 0 0 0 10px var(--book),
+    inset 0 0 0 11px rgba(234, 220, 192, 0.35);
 }
-.cover-text.drama { background: linear-gradient(160deg, var(--drama), #4d1f33); }
-.cover-text.movie { background: linear-gradient(160deg, var(--movie), #231d4d); }
-.cover-text span { font-size: 1.4rem; }
-.cover-text strong {
-  font-family: "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
-  font-size: 0.95rem;
-  line-height: 1.3;
+.cover-text.drama {
+  background: var(--grain), var(--drama);
+  box-shadow: inset 0 0 0 6px var(--drama), inset 0 0 0 7px rgba(234, 220, 192, 0.55), inset 0 0 0 10px var(--drama), inset 0 0 0 11px rgba(234, 220, 192, 0.35);
 }
+.cover-text.movie {
+  background: var(--grain), var(--movie);
+  box-shadow: inset 0 0 0 6px var(--movie), inset 0 0 0 7px rgba(234, 220, 192, 0.55), inset 0 0 0 10px var(--movie), inset 0 0 0 11px rgba(234, 220, 192, 0.35);
+}
+.cover-text span { font-size: 1.1rem; opacity: 0.8; }
+.cover-text strong { font-size: 0.95rem; line-height: 1.35; }
 
 @media (max-width: 520px) {
-  .gallery { padding: 24px 14px 28px; }
-  .wall { grid-template-columns: repeat(3, 1fr); gap: 28px 12px; }
-  .art { padding: 3px; border-width: 3px; }
-  .plaque { font-size: 0.7rem; padding: 3px 4px; }
-  .badge { top: -9px; right: -6px; font-size: 0.6rem; padding: 1px 5px; }
-  .cover-text span { font-size: 1rem; }
-  .cover-text strong { font-size: 0.75rem; }
+  .gallery { padding: 22px 12px 26px; border-width: 7px; }
+  .wall { grid-template-columns: repeat(3, 1fr); gap: 24px 12px; }
+  .shelf { height: 9px; margin: 0 -6px; }
+  .plaque { font-size: 0.68rem; padding: 3px 4px; margin: 8px 0 0; }
+  .ribbon { width: 15px; font-size: 0.5rem; padding-bottom: 9px; }
+  .cover-text { padding: 10px 6px; gap: 4px; }
+  .cover-text span { font-size: 0.85rem; }
+  .cover-text strong { font-size: 0.72rem; }
 }
 
 /* ---------- 보는 중 / 카드 목록 ---------- */
@@ -313,10 +367,8 @@ button.primary {
 .entry {
   display: flex;
   gap: 14px;
-  background: var(--card);
-  border: 1px solid var(--line);
   border-left: 5px solid var(--book);
-  border-radius: 12px;
+  border-radius: 3px;
   padding: 16px;
   margin-bottom: 12px;
 }
@@ -328,7 +380,9 @@ button.primary {
   height: 92px;
   flex-shrink: 0;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 2px;
+  filter: sepia(0.25) saturate(0.85);
+  box-shadow: 2px 2px 6px rgba(60, 40, 20, 0.3);
 }
 .entry-head {
   display: flex;
@@ -346,7 +400,7 @@ button.primary {
   overflow-wrap: anywhere;
 }
 .entry .actions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
-.entry .actions button { padding: 4px 10px; font-size: 0.85rem; }
+.entry .actions button { padding: 3px 10px; font-size: 0.85rem; }
 
 .empty { text-align: center; color: var(--muted); padding: 16px 0; }
 
@@ -355,26 +409,24 @@ dialog {
   width: min(560px, calc(100% - 32px));
   max-height: calc(100% - 32px);
   padding: 24px;
-  border: none;
-  border-radius: 18px;
-  background: var(--card);
+  border-radius: 4px;
   color: var(--text);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 60px rgba(20, 12, 6, 0.45);
 }
-dialog::backdrop { background: rgba(20, 15, 12, 0.6); }
+dialog::backdrop { background: rgba(30, 20, 12, 0.6); }
 dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
 
 .pick { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .pick label {
   cursor: pointer;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 4px 12px;
+  border-radius: 3px;
+  padding: 3px 12px;
 }
 .pick label:has(input:checked) {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
 }
 .pick input { position: absolute; opacity: 0; pointer-events: none; }
 .status-pick { margin-bottom: 16px; }
@@ -382,23 +434,33 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
 .field {
   display: block;
   margin-bottom: 14px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
 }
+/* 입력칸은 줄 공책처럼 */
 .field input,
 .field textarea {
   display: block;
   width: 100%;
-  margin-top: 6px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--bg);
+  margin-top: 4px;
+  padding: 8px 4px;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
   font: inherit;
   font-weight: 400;
 }
-.field textarea { resize: vertical; }
+.field textarea {
+  resize: vertical;
+  line-height: 28px;
+  padding: 0 4px;
+  background: repeating-linear-gradient(transparent 0 27px, var(--line) 27px 28px);
+  border-bottom: none;
+}
+.field input:focus,
+.field textarea:focus { outline: none; border-color: var(--accent); }
 
 /* 표지 고르기 */
 .cover-pick { display: flex; align-items: flex-end; gap: 12px; margin-top: 6px; }
@@ -406,7 +468,7 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   width: 72px;
   height: 104px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 2px;
   border: 1px solid var(--line);
 }
 .cover-buttons { display: flex; flex-wrap: wrap; gap: 6px; font-weight: 400; }
@@ -429,12 +491,13 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   width: 150px;
   flex-shrink: 0;
   aspect-ratio: 2 / 3;
-  border-radius: 6px;
+  border-radius: 2px 4px 4px 2px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 6px 16px rgba(40, 25, 10, 0.4);
 }
 .detail-art img,
 .detail-art .cover-text { width: 100%; height: 100%; object-fit: cover; }
+.detail-art img { filter: sepia(0.15); }
 .detail-info { min-width: 0; }
 .detail-info h2 { margin: 0 0 4px; }
 .detail-info .meta { margin: 0; }
@@ -446,9 +509,7 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
 
 /* ---------- 달력 ---------- */
 .card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 4px;
   padding: 20px;
   margin-bottom: 24px;
 }
@@ -459,7 +520,7 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   margin-bottom: 12px;
 }
 .cal-head h2 { margin: 0; font-size: 1.2rem; }
-.cal-head button { font-size: 1.2rem; padding: 2px 14px; }
+.cal-head button { font-size: 1.2rem; padding: 0 14px; }
 .month-summary {
   text-align: center;
   margin: -4px 0 14px;
@@ -473,8 +534,8 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
 }
 .cal-week { margin-bottom: 4px; }
 .cal-week span { text-align: center; font-size: 0.8rem; color: var(--muted); }
-.cal-week span:first-child { color: #d0503c; }
-.cal-week span:last-child { color: #3c74d0; }
+.cal-week span:first-child { color: #9a4a3a; }
+.cal-week span:last-child { color: #4a5f80; }
 
 /* 날짜 칸: 책 표지처럼 세로로 길쭉하게 */
 .cell {
@@ -482,13 +543,13 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   min-width: 0;
   aspect-ratio: 3 / 4;
   padding: 0;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--grain), var(--paper-dark);
   overflow: hidden;
 }
 .cell.blank { visibility: hidden; }
-.cell.selected { border-color: var(--accent); }
+.cell.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
 .cell img,
 .cell .cover-text {
   position: absolute;
@@ -497,7 +558,8 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   height: 100%;
   object-fit: cover;
 }
-.cell .cover-text { padding: 18px 3px 3px; gap: 0; }
+.cell img { filter: sepia(0.25) saturate(0.85); }
+.cell .cover-text { padding: 18px 3px 3px; gap: 0; box-shadow: none; }
 .cell .cover-text span { display: none; }
 .cell .cover-text strong { font-size: 0.7rem; }
 .cell .num {
@@ -506,21 +568,21 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   left: 3px;
   min-width: 20px;
   padding: 0 5px;
-  border-radius: 999px;
+  border-radius: 2px;
   font-size: 0.75rem;
   line-height: 1.5;
   text-align: center;
 }
-.cell.filled .num { background: rgba(0, 0, 0, 0.55); color: #fff; }
-.cell.today .num { background: var(--accent); color: #fff; }
+.cell.filled .num { background: rgba(242, 233, 214, 0.85); color: #3b2c22; }
+.cell.today .num { background: var(--accent); color: #f4e9d6; }
 .cell .more {
   position: absolute;
   right: 3px;
   bottom: 3px;
   padding: 0 6px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: var(--accent);
-  color: #fff;
+  color: #f4e9d6;
   font-size: 0.7rem;
   font-weight: 700;
   line-height: 1.6;
@@ -539,7 +601,7 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   margin-bottom: 12px;
 }
 .day-bar strong { margin-right: auto; }
-.day-bar button { padding: 4px 10px; font-size: 0.85rem; }
+.day-bar button { padding: 3px 10px; font-size: 0.85rem; }
 
 /* 백업 */
 .backup {

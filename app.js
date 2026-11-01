@@ -105,13 +105,14 @@ function renderCollection() {
   $("doing-empty").textContent = `${t.doing}인 ${t.nameI} 없어요.`;
 }
 
-// 전시관에 거는 액자 하나
+// 서가에 꽂는 작품 하나
 function makeFrame(item, i) {
   const li = document.createElement("li");
   li.className = `frame ${item.type}`;
   if (item.stars === 5) li.classList.add("masterpiece");
   if (item.id === justDoneId) li.classList.add("just-done");
   li.style.setProperty("--i", Math.min(i, 20)); // 하나씩 순서대로 나타나게
+  li.style.setProperty("--tilt", `${tiltOf(item.id)}deg`); // 도서 카드가 살짝 삐뚤게
 
   const btn = document.createElement("button");
   btn.type = "button";
@@ -122,13 +123,17 @@ function makeFrame(item, i) {
   art.className = "art";
   art.appendChild(coverArt(item));
   if (item.stars === 5) {
-    const badge = document.createElement("span");
-    badge.className = "badge";
-    badge.textContent = "✨ 인생작";
-    art.appendChild(badge);
+    const ribbon = document.createElement("span");
+    ribbon.className = "ribbon";
+    ribbon.textContent = "인생작";
+    art.appendChild(ribbon);
   }
 
-  // 액자 아래 작품 이름표
+  // 원목 선반
+  const shelf = document.createElement("div");
+  shelf.className = "shelf";
+
+  // 선반 아래 도서 카드
   const plaque = document.createElement("div");
   plaque.className = "plaque";
   const name = document.createElement("strong");
@@ -138,9 +143,16 @@ function makeFrame(item, i) {
   stars.textContent = item.stars ? starText(item.stars) : "";
   plaque.append(name, stars);
 
-  btn.append(art, plaque);
+  btn.append(art, shelf, plaque);
   li.appendChild(btn);
   return li;
+}
+
+// 기록마다 항상 같은 기울기 (-1.2도 ~ 1.2도)
+function tiltOf(id) {
+  let h = 0;
+  for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 997;
+  return ((h % 5) - 2) * 0.6;
 }
 
 // 표지 그림 (없거나 깨지면 제목으로 만든 표지)
@@ -159,7 +171,7 @@ function coverText(item) {
   const div = document.createElement("div");
   div.className = `cover-text ${item.type}`;
   const icon = document.createElement("span");
-  icon.textContent = TYPES[item.type].icon;
+  icon.textContent = "❦";
   const title = document.createElement("strong");
   title.textContent = item.title;
   div.append(icon, title);
