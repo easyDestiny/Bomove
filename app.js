@@ -231,10 +231,10 @@ function makeEntry(item, withFinish) {
     actions.appendChild(finishBtn);
   }
   const editBtn = document.createElement("button");
-  editBtn.textContent = "수정";
+  editBtn.textContent = "✎ 수정";
   editBtn.addEventListener("click", () => openForm(item.id));
   const delBtn = document.createElement("button");
-  delBtn.textContent = "삭제";
+  delBtn.textContent = "✕ 삭제";
   delBtn.addEventListener("click", () => remove(item.id));
   actions.append(editBtn, delBtn);
   body.appendChild(actions);

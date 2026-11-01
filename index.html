@@ -75,7 +75,7 @@
 
       <div class="day-bar" id="day-bar" hidden>
         <strong id="day-label"></strong>
-        <button type="button" id="write-day">이 날 기록 쓰기</button>
+        <button type="button" id="write-day">✎ 이 날 기록 쓰기</button>
         <button type="button" id="clear-day">이번 달 전체 보기</button>
       </div>
       <ul class="list" id="day-list"></ul>
@@ -84,9 +84,9 @@
 
     <!-- 백업 -->
     <section class="backup">
-      <button type="button" id="export-btn">기록 백업 파일로 저장</button>
+      <button type="button" id="export-btn">💾 기록 백업 파일로 저장</button>
       <label class="file-btn">
-        백업 파일 불러오기
+        📂 백업 파일 불러오기
         <input type="file" id="import-file" accept="application/json" hidden>
       </label>
     </section>
@@ -129,10 +129,10 @@
           <img id="cover-preview" alt="표지 미리보기" hidden>
           <div class="cover-buttons">
             <label class="file-btn">
-              사진 고르기
+              📷 사진 고르기
               <input type="file" id="cover-file" accept="image/*" hidden>
             </label>
-            <button type="button" id="cover-remove" hidden>사진 빼기</button>
+            <button type="button" id="cover-remove" hidden>✕ 사진 빼기</button>
           </div>
         </div>
         <input type="url" id="cover-url" placeholder="또는 인터넷 이미지 주소 붙여넣기">
@@ -159,8 +159,8 @@
   <dialog id="detail-dialog">
     <div class="detail" id="detail"></div>
     <div class="buttons">
-      <button type="button" id="detail-edit">수정</button>
-      <button type="button" id="detail-delete">삭제</button>
+      <button type="button" id="detail-edit">✎ 수정</button>
+      <button type="button" id="detail-delete">✕ 삭제</button>
       <button type="button" class="primary" id="detail-close">닫기</button>
     </div>
   </dialog>

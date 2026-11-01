@@ -612,3 +612,162 @@ dialog h2 { margin: 0 0 16px; font-size: 1.2rem; }
   margin-top: 32px;
   font-size: 0.9rem;
 }
+
+/* =========================================================
+   터치하는 것들을 아기자기하게
+   - 버튼: 동글동글 + 바느질 점선 + 누르면 쏙 들어가요
+   - 탭: 고른 탭에 마스킹테이프
+   - 별: 누르면 통통 튀어요
+   - 책: 누르면 살짝 기울어요
+   ========================================================= */
+
+/* 통통 튀는 움직임 (조금 지나쳤다가 돌아오는 곡선) */
+:root { --spring: cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* 일반 버튼 (책 표지, 달력 칸, 별은 빼고) */
+button:not(.cell):not(.frame button):not(.star-input button),
+.file-btn {
+  position: relative;
+  border-radius: 999px;
+  padding: 7px 16px;
+  /* 안쪽 바느질 점선 */
+  outline: 1.5px dashed rgba(120, 90, 60, 0.4);
+  outline-offset: -5px;
+  /* 아래쪽에 살짝 두께감 */
+  box-shadow: 0 3px 0 var(--line);
+  transition: transform 0.25s var(--spring), box-shadow 0.15s;
+}
+button.primary:not(.frame button) {
+  outline-color: rgba(244, 233, 214, 0.55);
+  box-shadow: 0 3px 0 #4e2219;
+}
+/* 누르면 쏙 */
+button:not(.cell):not(.frame button):not(.star-input button):active,
+.file-btn:active {
+  transform: translateY(2px) scale(0.96);
+  box-shadow: 0 1px 0 var(--line);
+}
+button:focus-visible,
+.file-btn:focus-within {
+  box-shadow: 0 0 0 3px rgba(125, 58, 44, 0.35);
+}
+
+/* 작은 버튼들 */
+.entry .actions button,
+.day-bar button { padding: 4px 12px; }
+
+/* 달력 화살표는 동그랗게 */
+.cal-head button:not(.cell) {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* 탭: 둥근 책갈피 + 고른 탭에 마스킹테이프 */
+.main-tabs button:not(.cell) {
+  border-radius: 16px 16px 6px 6px;
+  padding: 8px 18px 6px;
+}
+.main-tabs button.active::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 38px;
+  height: 13px;
+  transform: translateX(-50%) rotate(-4deg);
+  background: repeating-linear-gradient(45deg,
+    rgba(196, 120, 100, 0.75) 0 4px, rgba(240, 210, 190, 0.75) 4px 8px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+.main-tabs button.active { animation: pop 0.4s var(--spring); }
+
+/* 위쪽 숫자들은 꼬리표 모양 */
+.stats span {
+  position: relative;
+  border-radius: 4px 14px 14px 4px;
+  padding: 2px 14px 2px 22px;
+}
+.stats span::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+/* 종류·상태 고르기: 동글 스티커 */
+.pick label {
+  border-radius: 999px;
+  padding: 4px 14px;
+  outline: 1.5px dashed rgba(120, 90, 60, 0.3);
+  outline-offset: -4px;
+  transition: transform 0.25s var(--spring);
+}
+.pick label:has(input:checked) {
+  outline-color: rgba(244, 233, 214, 0.5);
+  animation: pop 0.4s var(--spring);
+}
+.pick label:has(input:checked)::after { content: " ✓"; }
+.pick label:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(125, 58, 44, 0.35); }
+
+/* 별: 올리면 커지고, 고르면 하나씩 통통 */
+.star-input button {
+  transition: transform 0.25s var(--spring), color 0.2s;
+}
+.star-input button:active { transform: scale(0.85); }
+.star-input button.on { animation: pop 0.45s var(--spring) both; }
+.star-input button.on:nth-child(2) { animation-delay: 0.05s; }
+.star-input button.on:nth-child(3) { animation-delay: 0.1s; }
+.star-input button.on:nth-child(4) { animation-delay: 0.15s; }
+.star-input button.on:nth-child(5) { animation-delay: 0.2s; }
+
+/* 서가의 책: 올리면 살짝 기울고, 누르면 쏙 */
+.art { transition: transform 0.35s var(--spring); }
+.frame button:hover .art,
+.frame button:focus-visible .art { transform: translateY(-8px) rotate(-2deg); }
+.frame button:active .art { transform: translateY(-3px) rotate(1deg) scale(0.96); }
+.plaque { transition: transform 0.35s var(--spring); }
+
+/* 달력 칸 */
+.cell { transition: transform 0.25s var(--spring); }
+.cell:not(.blank):active { transform: scale(0.94); }
+
+/* 마우스가 있는 기기에서만 (휴대폰은 터치 후에 기울어진 채로 남지 않게) */
+@media (hover: hover) {
+  button:not(.cell):not(.frame button):not(.star-input button):hover,
+  .file-btn:hover {
+    transform: translateY(-2px) rotate(-1.5deg);
+  }
+  .pick label:hover { transform: rotate(-2deg) scale(1.04); }
+  .star-input button:hover { transform: scale(1.25) rotate(-10deg); }
+  .frame button:hover .plaque { transform: rotate(calc(var(--tilt, 0deg) * -1)); }
+  .cell:not(.blank):hover { transform: scale(1.06) rotate(-1.5deg); z-index: 1; }
+}
+
+/* 창은 통 하고 떠올라요 */
+dialog[open] { animation: popin 0.4s var(--spring); }
+
+@keyframes pop {
+  0% { transform: scale(0.8); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes popin {
+  from { opacity: 0; transform: translateY(30px) rotate(-2deg) scale(0.95); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 움직임 줄이기를 켜 둔 사람에게는 움직임 없이 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
